@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare Hospital Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #3b82f6;
+            --dark: #1f2937;
+            --light: #f9fafb;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        
+        .sidebar {
+            transition: all 0.3s;
+        }
+        
+        .dashboard-card {
+            transition: all 0.2s;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .patient-avatar {
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+            width: 50px;
+            height: 50px;
+            background-color: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                z-index: 100;
+            }
+            
+            .sidebar.active {
+                left: 0;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="sidebar bg-white w-64 border-r border-gray-200 flex flex-col">
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/1e694066-c12e-415e-854a-eb97ac6769ee.png" alt="Hospital logo with medical cross symbol in blue" class="h-10 w-10 rounded-lg">
+                    <h1 class="text-xl font-bold text-gray-800">MediCare HMS</h1>
+                </div>
+            </div>
+            <nav class="flex-1 overflow-y-auto">
+                <div class="space-y-1 px-2 py-4">
+                    <a href="#dashboard" class="flex items-center space-x-3 px-4 py-3 bg-blue-50 text-blue-600 rounded-lg font-medium">
+                        <i class="fas fa-tachometer-alt w-5 text-center"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#patients" class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg font-medium">
+                        <i class="fas fa-user-injured w-5 text-center"></i>
+                        <span>Patients</span>
+                    </a>
+                    <a href="#doctors" class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg font-medium">
+                        <i class="fas fa-user-md w-5 text-center"></i>
+                        <span>Doctors</span>
+                    </a>
+                    <a href="#appointments" class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg font-medium">
+                        <i class="fas fa-calendar-check w-5 text-center"></i>
+                        <span>Appointments</span>
+                    </a>
+                    <a href="#billing" class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg font-medium">
+                        <i class="fas fa-procedures w-5 text-center"></i>
+                        <span>Wards</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg font-medium">
+                        <i class="fas fa-file-invoice-dollar w-5 text-center"></i>
+                        <span>Billing</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg font-medium">
+                        <i class="fas fa-pills w-5 text-center"></i>
+                        <span>Pharmacy</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg font-medium">
+                        <i class="fas fa-chart-line w-5 text-center"></i>
+                        <span>Reports</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg font-medium">
+                        <i class="fas fa-cog w-5 text-center"></i>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </nav>
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                        <i class="fas fa-user text-blue-600"></i>
+                    </div>
+                    <div>
+                        <p class="font-medium">Admin User</p>
+                        <p class="text-sm text-gray-500">Super Admin</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <!-- Top Navigation -->
+            <header class="bg-white border-b border-gray-200 flex items-center justify-between px-6 py-4">
+                <div class="flex items-center">
+                    <button id="menu-toggle" class="md:hidden mr-4 text-gray-500">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2 class="text-xl font-semibold text-gray-800">Dashboard Overview</h2>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        <input type="text" placeholder="Search..." class="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <button class="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="p-6">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="dashboard-card bg-white rounded-xl shadow-sm p-6 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Total Patients</p>
+                            <h3 class="text-3xl font-bold mt-1">1,248</h3>
+                            <p class="text-sm text-green-500 mt-2">+12% from last month</p>
+                        </div>
+                        <div class="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center">
+                            <i class="fas fa-user-injured text-blue-600 text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="dashboard-card bg-white rounded-xl shadow-sm p-6 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Total Doctors</p>
+                            <h3 class="text-3xl font-bold mt-1">58</h3>
+                            <p class="text-sm text-green-500 mt-2">+3 new this month</p>
+                        </div>
+                        <div class="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center">
+                            <i class="fas fa-user-md text-green-600 text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="dashboard-card bg-white rounded-xl shadow-sm p-6 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Today's Appointments</p>
+                            <h3 class="text-3xl font-bold mt-1">87</h3>
+                            <p class="text-sm text-yellow-500 mt-2">15 pending confirmations</p>
+                        </div>
+                        <div class="w-14 h-14 rounded-full bg-purple-100 flex items-center justify-center">
+                            <i class="fas fa-calendar-check text-purple-600 text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="dashboard-card bg-white rounded-xl shadow-sm p-6 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Monthly Revenue</p>
+                            <h3 class="text-3xl font-bold mt-1">$186K</h3>
+                            <p class="text-sm text-green-500 mt-2">8% increase</p>
+                        </div>
+                        <div class="w-14 h-14 rounded-full bg-orange-100 flex items-center justify-center">
+                            <i class="fas fa-dollar-sign text-orange-600 text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Appointments and Quick Actions -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm p-6 lg:col-span-2">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold">Recent Appointments</h3>
+                            <button class="text-sm text-blue-600 font-medium">View All</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="patient-avatar font-medium">JD</div>
+                                                <div class="ml-4">
+                                                    <div class="text-sm font-medium text-gray-900">John Doe</div>
+                                                    <div class="text-sm text-gray-500">ID: #PAT-1245</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">Dr. Smith</div>
+                                            <div class="text-sm text-gray-500">Cardiology</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">10:30 AM</div>
+                                            <div class="text-sm text-gray-500">Today</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Confirmed</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <button class="text-blue-600 hover:text-blue-800">Details</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="patient-avatar font-medium">MJ</div>
+                                                <div class="ml-4">
+                                                    <div class="text-sm font-medium text-gray-900">Mary Johnson</div>
+                                                    <div class="text-sm text-gray-500">ID: #PAT-1123</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">Dr. Williams</div>
+                                            <div class="text-sm text-gray-500">Orthopedics</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">2:15 PM</div>
+                                            <div class="text-sm text-gray-500">Today</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <button class="text-blue-600 hover:text-blue-800">Confirm</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="patient-avatar font-medium">RS</div>
+                                                <div class="ml-4">
+                                                    <div class="text-sm font-medium text-gray-900">Robert Smith</div>
+                                                    <div class="text-sm text-gray-500">ID: #PAT-1098</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">Dr. Lee</div>
+                                            <div class="text-sm text-gray-500">Neurology</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">11:00 AM</div>
+                                            <div class="text-sm text-gray-500">Tomorrow</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Scheduled</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <button class="text-blue-600 hover:text-blue-800">Remind</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="patient-avatar font-medium">AB</div>
+                                                <div class="ml-4">
+                                                    <div class="text-sm font-medium text-gray-900">Anna Brown</div>
+                                                    <div class="text-sm text-gray-500">ID: #PAT-1345</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">Dr. Davis</div>
+                                            <div class="text-sm text-gray-500">Pediatrics</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">9:00 AM</div>
+                                            <div class="text-sm text-gray-500">Tomorrow</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Confirmed</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <button class="text-blue-600 hover:text-blue-800">Details</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-lg font-semibold mb-6">Quick Actions</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                                <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-2">
+                                    <i class="fas fa-plus text-blue-600 text-xl"></i>
+                                </div>
+                                <span class="text-sm font-medium">New Patient</span>
+                            </button>
+                            <button class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                                <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-2">
+                                    <i class="fas fa-calendar-plus text-green-600 text-xl"></i>
+                                </div>
+                                <span class="text-sm font-medium">Add Appointment</span>
+                            </button>
+                            <button class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                                <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mb-2">
+                                    <i class="fas fa-prescription-bottle-alt text-purple-600 text-xl"></i>
+                                </div>
+                                <span class="text-sm font-medium">Pharmacy</span>
+                            </button>
+                            <button class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                                <div class="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center mb-2">
+                                    <i class="fas fa-file-invoice-dollar text-orange-600 text-xl"></i>
+                                </div>
+                                <span class="text-sm font-medium">Generate Bill</span>
+                            </button>
+                            <button class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                                <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-2">
+                                    <i class="fas fa-chart-pie text-red-600 text-xl"></i>
+                                </div>
+                                <span class="text-sm font-medium">Reports Dashboard</span>
+                            </button>
+                            <button onclick="document.getElementById('sql-modal').classList.remove('hidden')" 
+                                    class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                                <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mb-2">
+                                    <i class="fas fa-database text-indigo-600 text-xl"></i>
+                                </div>
+                                <span class="text-sm font-medium">SQL Database</span>
+                            </button>
+                            <button onclick="document.getElementById('sql-modal').classList.remove('hidden')" 
+                                    class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                                <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mb-2">
+                                    <i class="fas fa-database text-indigo-600 text-xl"></i>
+                                </div>
+                                <span class="text-sm font-medium">SQL Database</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patients and Billing -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold">Active Patients</h3>
+                            <button class="text-sm text-blue-600 font-medium">View All</button>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-center p-3 border border-gray-100 rounded-lg hover:bg-gray-50">
+                                <div class="patient-avatar font-medium">TM</div>
+                                <div class="ml-4 flex-1">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <div class="font-medium">Thomas Miller</div>
+                                            <div class="text-sm text-gray-500">Admitted: Cardiology</div>
+                                        </div>
+                                        <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">Critical</span>
+                                    </div>
+                                    <div class="mt-2 flex items-center text-sm text-gray-500">
+                                        <i class="fas fa-bed mr-1"></i> Room 304 / Bed 2
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center p-3 border border-gray-100 rounded-lg hover:bg-gray-50">
+                                <div class="patient-avatar font-medium">SW</div>
+                                <div class="ml-4 flex-1">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <div class="font-medium">Sarah Wilson</div>
+                                            <div class="text-sm text-gray-500">Admitted: Pediatrics</div>
+                                        </div>
+                                        <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Moderate</span>
+                                    </div>
+                                    <div class="mt-2 flex items-center text-sm text-gray-500">
+                                        <i class="fas fa-bed mr-1"></i> Room 212 / Bed 1
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center p-3 border border-gray-100 rounded-lg hover:bg-gray-50">
+                                <div class="patient-avatar font-medium">RJ</div>
+                                <div class="ml-4 flex-1">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <div class="font-medium">Robert Johnson</div>
+                                            <div class="text-sm text-gray-500">Admitted: Orthopedics</div>
+                                        </div>
+                                        <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Stable</span>
+                                    </div>
+                                    <div class="mt-2 flex items-center text-sm text-gray-500">
+                                        <i class="fas fa-bed mr-1"></i> Room 105 / Bed 3
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold">Recent Bills</h3>
+                            <button class="text-sm text-blue-600 font-medium">View All</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill ID</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">#BIL-2023-4587</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Emma Davis</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">12 Nov, 2023</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$1,250</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Paid</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">#BIL-2023-4586</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Michael Brown</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10 Nov, 2023</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$850</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">#BIL-2023-4585</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Olivia Wilson</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">08 Nov, 2023</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$2,350</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Paid</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Generate New Bill</button>
+                            <button class="px-4 py-2 bg-blue-600 rounded-lg text-sm font-medium text-white hover:bg-blue-700">Print Selected</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Sections for Each Module -->
+                <div id="patients-section" class="hidden content-section">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-xl font-semibold mb-6">Patient Management</h3>
+                        <!-- Patient management content here -->
+                    </div>
+                </div>
+
+                <div id="doctors-section" class="hidden content-section">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-xl font-semibold mb-6">Doctor Management</h3>
+                        <!-- Doctor management content here -->
+                    </div>
+                </div>
+
+                <div id="appointments-section" class="hidden content-section">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-xl font-semibold mb-6">Appointment Scheduling</h3>
+                        <!-- Appointment content here -->
+                    </div>
+                </div>
+
+                <div id="wards-section" class="hidden content-section">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-xl font-semibold mb-6">Ward Management</h3>
+                        <!-- Ward management content here -->
+                    </div>
+                </div>
+
+                <div id="billing-section" class="hidden content-section">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-xl font-semibold mb-6">Billing System</h3>
+                        <!-- Billing content here -->
+                    </div>
+                </div>
+
+                <div id="pharmacy-section" class="hidden content-section">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-xl font-semibold mb-6">Pharmacy Management</h3>
+                        <!-- Pharmacy content here -->
+                    </div>
+                </div>
+
+                <div id="reports-section" class="hidden content-section">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-xl font-semibold mb-6">Reports Dashboard</h3>
+                        <!-- Reports content here -->
+                    </div>
+                </div>
+
+                <div id="settings-section" class="hidden content-section">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-xl font-semibold mb-6">System Settings</h3>
+                        <!-- Settings content here -->
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="sql-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-4xl max-h-[90vh] overflow-auto">
+            <div class="flex items-center justify-between p-6 border-b">
+                <h3 class="text-xl font-semibold">Hospital Management Database</h3>
+                <button onclick="document.getElementById('sql-modal').classList.add('hidden')" class="text-gray-400 hover:text-gray-500">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="mb-6">
+                    <h4 class="text-lg font-medium mb-3">MySQL Schema</h4>
+                    <pre class="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto">
+                        <code>
+-- Patients table
+CREATE TABLE patients (
+    patient_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    dob DATE,
+    gender ENUM('male', 'female', 'other'),
+    address TEXT,
+    phone VARCHAR(20),
+    email VARCHAR(100),
+    registration_date DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Doctors table 
+CREATE TABLE doctors (
+    doctor_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    specialty VARCHAR(100),
+    phone VARCHAR(20),
+    email VARCHAR(100)
+);
+
+-- Appointments table
+CREATE TABLE appointments (
+    appointment_id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id INT,
+    doctor_id INT,
+    appointment_date DATETIME,
+    status ENUM('scheduled', 'confirmed', 'completed', 'cancelled'),
+    notes TEXT,
+    FOREIGN KEY (patient_id) REFERENCES patients(patient_id),
+    FOREIGN KEY (doctor_id) REFERENCES doctors(doctor_id)
+);
+                        </code>
+                    </pre>
+                </div>
+                <div class="mb-6">
+                    <h4 class="text-lg font-medium mb-3">Sample Queries</h4>
+                    <pre class="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto">
+                        <code>
+-- Get appointments for today
+SELECT a.appointment_id, p.name AS patient_name, d.name AS doctor_name, 
+       a.appointment_date, a.status
+FROM appointments a
+JOIN patients p ON a.patient_id = p.patient_id
+JOIN doctors d ON a.doctor_id = d.doctor_id
+WHERE DATE(a.appointment_date) = CURDATE();
+
+-- Generate bill report
+SELECT b.bill_id, p.name AS patient_name, b.amount, 
+       b.date_issued, b.status
+FROM bills b
+JOIN patients p ON b.patient_id = p.patient_id
+WHERE b.status = 'pending';
+                        </code>
+                    </pre>
+                </div>
+                <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" onclick="document.getElementById('sql-modal').classList.add('hidden')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SQL Modal -->
+    <div id="sql-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-4xl max-h-[90vh] overflow-auto">
+            <div class="flex items-center justify-between p-6 border-b">
+                <h3 class="text-xl font-semibold">Hospital Management Database</h3>
+                <button onclick="document.getElementById('sql-modal').classList.add('hidden')" class="text-gray-400 hover:text-gray-500">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="mb-6">
+                    <h4 class="text-lg font-medium mb-3">MySQL Schema</h4>
+                    <pre class="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto">
+                        <code>
+-- Patients table
+CREATE TABLE patients (
+    patient_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    dob DATE,
+    gender ENUM('male', 'female', 'other'),
+    address TEXT,
+    phone VARCHAR(20),
+    email VARCHAR(100),
+    registration_date DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Doctors table 
+CREATE TABLE doctors (
+    doctor_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    specialty VARCHAR(100),
+    phone VARCHAR(20),
+    email VARCHAR(100)
+);
+
+-- Appointments table
+CREATE TABLE appointments (
+    appointment_id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id INT,
+    doctor_id INT,
+    appointment_date DATETIME,
+    status ENUM('scheduled', 'confirmed', 'completed', 'cancelled'),
+    notes TEXT,
+    FOREIGN KEY (patient_id) REFERENCES patients(patient_id),
+    FOREIGN KEY (doctor_id) REFERENCES doctors(doctor_id)
+);
+
+-- Bills table
+CREATE TABLE bills (
+    bill_id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id INT,
+    amount DECIMAL(10,2),
+    date_issued DATE,
+    status ENUM('pending', 'paid', 'overdue'),
+    FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
+);
+                        </code>
+                    </pre>
+                </div>
+                <div class="mb-6">
+                    <h4 class="text-lg font-medium mb-3">Sample Queries</h4>
+                    <pre class="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto">
+                        <code>
+-- Get today's appointments
+SELECT a.appointment_id, p.name AS patient_name, 
+       d.name AS doctor_name, a.appointment_date, a.status
+FROM appointments a
+JOIN patients p ON a.patient_id = p.patient_id
+JOIN doctors d ON a.doctor_id = d.doctor_id
+WHERE DATE(a.appointment_date) = CURDATE();
+
+-- Generate pending bills report
+SELECT b.bill_id, p.name AS patient_name, b.amount, 
+       b.date_issued, b.status
+FROM bills b
+JOIN patients p ON b.patient_id = p.patient_id
+WHERE b.status = 'pending';
+
+-- Trigger for patient discharge
+DELIMITER //
+CREATE TRIGGER after_patient_discharge 
+AFTER UPDATE ON patients
+FOR EACH ROW
+BEGIN
+    IF NEW.status = 'discharged' THEN
+        INSERT INTO billing (patient_id, amount, description)
+        VALUES (NEW.patient_id, 5000.00, 'Hospital discharge fee');
+    END IF;
+END //
+DELIMITER ;
+                        </code>
+                    </pre>
+                </div>
+                <div class="mb-6">
+                    <h4 class="text-lg font-medium mb-3">Stored Procedures</h4>
+                    <pre class="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto">
+                        <code>
+-- Calculate total bill
+DELIMITER //
+CREATE PROCEDURE CalculateTotalBill(IN patientId INT, OUT total DECIMAL(10,2))
+BEGIN
+    SELECT SUM(amount) INTO total 
+    FROM bills 
+    WHERE patient_id = patientId AND status != 'paid';
+END //
+DELIMITER ;
+
+-- Generate monthly revenue report
+DELIMITER //
+CREATE PROCEDURE GenerateMonthlyRevenueReport(IN month INT, IN year INT)
+BEGIN
+    SELECT 
+        p.name AS patient_name,
+        b.bill_id,
+        b.amount,
+        b.date_issued,
+        b.status
+    FROM bills b
+    JOIN patients p ON b.patient_id = p.patient_id
+    WHERE MONTH(b.date_issued) = month AND YEAR(b.date_issued) = year
+    ORDER BY b.date_issued ASC;
+END //
+DELIMITER ;
+                        </code>
+                    </pre>
+                </div>
+                <button class="px-4 py-2 bg-blue-600 rounded-lg text-white hover:bg-blue-700" onclick="document.getElementById('sql-modal').classList.add('hidden')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SQL Database Modal -->
+    <div id="sql-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-4xl max-h-[90vh] overflow-auto">
+            <div class="flex items-center justify-between p-6 border-b">
+                <h3 class="text-xl font-semibold">Hospital Management Database</h3>
+                <button onclick="document.getElementById('sql-modal').classList.add('hidden')" class="text-gray-400 hover:text-gray-500">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="mb-6">
+                    <h4 class="text-lg font-medium mb-3">MySQL Schema</h4>
+                    <pre class="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto">
+                        <code>
+-- Patients table
+CREATE TABLE patients (
+    patient_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    dob DATE,
+    gender ENUM('male', 'female', 'other'),
+    address TEXT,
+    phone VARCHAR(20),
+    email VARCHAR(100),
+    registration_date DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Doctors table 
+CREATE TABLE doctors (
+    doctor_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    specialty VARCHAR(100),
+    phone VARCHAR(20),
+    email VARCHAR(100)
+);
+
+-- Appointments table
+CREATE TABLE appointments (
+    appointment_id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id INT,
+    doctor_id INT,
+    appointment_date DATETIME,
+    status ENUM('scheduled', 'confirmed', 'completed', 'cancelled'),
+    notes TEXT,
+    FOREIGN KEY (patient_id) REFERENCES patients(patient_id),
+    FOREIGN KEY (doctor_id) REFERENCES doctors(doctor_id)
+);
+
+-- Bills table
+CREATE TABLE bills (
+    bill_id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id INT,
+    amount DECIMAL(10,2),
+    date_issued DATE,
+    status ENUM('pending', 'paid', 'overdue'),
+    FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
+);
+                        </code>
+                    </pre>
+                </div>
+                <div class="mb-6">
+                    <h4 class="text-lg font-medium mb-3">Sample Queries</h4>
+                    <pre class="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto">
+                        <code>
+-- Get today's appointments
+SELECT a.appointment_id, p.name AS patient_name, 
+       d.name AS doctor_name, a.appointment_date, a.status
+FROM appointments a
+JOIN patients p ON a.patient_id = p.patient_id
+JOIN doctors d ON a.doctor_id = d.doctor_id
+WHERE DATE(a.appointment_date) = CURDATE();
+
+-- Generate pending bills report
+SELECT b.bill_id, p.name AS patient_name, b.amount, 
+       b.date_issued, b.status
+FROM bills b
+JOIN patients p ON b.patient_id = p.patient_id
+WHERE b.status = 'pending';
+
+-- Trigger for patient discharge
+DELIMITER //
+CREATE TRIGGER after_patient_discharge 
+AFTER UPDATE ON patients
+FOR EACH ROW
+BEGIN
+    IF NEW.status = 'discharged' THEN
+        INSERT INTO billing (patient_id, amount, description)
+        VALUES (NEW.patient_id, 5000.00, 'Hospital discharge fee');
+    END IF;
+END //
+DELIMITER ;
+                        </code>
+                    </pre>
+                </div>
+                <div class="mb-6">
+                    <h4 class="text-lg font-medium mb-3">Stored Procedures</h4>
+                    <pre class="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto">
+                        <code>
+-- Calculate total bill
+DELIMITER //
+CREATE PROCEDURE CalculateTotalBill(IN patientId INT, OUT total DECIMAL(10,2))
+BEGIN
+    SELECT SUM(amount) INTO total 
+    FROM bills 
+    WHERE patient_id = patientId AND status != 'paid';
+END //
+DELIMITER ;
+
+-- Generate monthly revenue report
+DELIMITER //
+CREATE PROCEDURE GenerateMonthlyRevenueReport(IN month INT, IN year INT)
+BEGIN
+    SELECT 
+        p.name AS patient_name,
+        b.bill_id,
+        b.amount,
+        b.date_issued,
+        b.status
+    FROM bills b
+    JOIN patients p ON b.patient_id = p.patient_id
+    WHERE MONTH(b.date_issued) = month AND YEAR(b.date_issued) = year
+    ORDER BY b.date_issued ASC;
+END //
+DELIMITER ;
+                        </code>
+                    </pre>
+                </div>
+                <button class="px-4 py-2 bg-blue-600 rounded-lg text-white hover:bg-blue-700" onclick="document.getElementById('sql-modal').classList.add('hidden')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for adding new patient -->
+    <div id="patient-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+=======
+
+2. Add the SQL button to quick actions:
+
+<<<<<<< SEARCH
+                            <button class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors col-span-2">
+                                <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-2">
+                                    <i class="fas fa-chart-pie text-red-600 text-xl"></i>
+                                </div>
+                                <span class="text-sm font-medium">Reports Dashboard</span>
+                            </button>
+=======
+                            <button class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                                <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-2">
+                                    <i class="fas fa-chart-pie text-red-600 text-xl"></i>
+                                </div>
+                                <span class="text-sm font-medium">Reports Dashboard</span>
+                            </button>
+                            <button onclick="document.getElementById('sql-modal').classList.remove('hidden')" class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                                <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mb-2">
+                                    <i class="fas fa-database text-indigo-600 text-xl"></i>
+                                </div>
+                                <span class="text-sm font-medium">View SQL Schema</span>
+                            </button>
+=======
+
+3. Update the script section to include CRUD operations:
+
+<<<<<<< SEARCH
+        // Database operations
+        async function fetchPatients() {
+            try {
+                const response = await fetch('/api/patients');
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching patients:', error);
+                return [];
+            }
+        }
+
+        async function fetchAppointments() {
+            try {
+                const response = await fetch('/api/appointments');
+                const data = await response.json();
+                return data.sort((a, b) => new Date(a.appointment_date) - new Date(b.appointment_date));
+            } catch (error) {
+                console.error('Error fetching appointments:', error);
+                return [];
+            }
+        }
+
+        async function createPatient(patientData) {
+            try {
+                const response = await fetch('/api/patients', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(patientData)
+                });
+                return await response.json();
+            } catch (error) {
+                console.error('Error creating patient:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        async function generateBill(patientId) {
+            try {
+                const response = await fetch(`/api/bills/generate/${patientId}`);
+                return await response.json();
+            } catch (error) {
+                console.error('Error generating bill:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        async function runCustomQuery(query) {
+            try {
+                const response = await fetch('/api/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query })
+                });
+                return await response.json();
+            } catch (error) {
+                console.error('Query error:', error);
+                return { success: false, error: error.message };
+            }
+=======
+        // Database operations
+        async function fetchPatients() {
+            try {
+                const response = await fetch('/api/patients');
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching patients:', error);
+                return [];
+            }
+        }
+
+        async function createPatient(patientData) {
+            try {
+                const response = await fetch('/api/patients', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(patientData)
+                });
+                return await response.json();
+            } catch (error) {
+                console.error('Error creating patient:', error);
+            }
+        }
+
+        async function generateBill(patientId) {
+            try {
+                const response = await fetch(`/api/bills/generate/${patientId}`);
+                return await response.json();
+            } catch (error) {
+                console.error('Error generating bill:', error);
+            }
+        }
+
+        // Navigation handling
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const section = this.getAttribute('href').substring(1);
+                
+                // Hide all content sections
+                document.querySelectorAll('.content-section').forEach(sec => {
+                    sec.classList.add('hidden');
+                });
+                
+                // Show selected section
+                document.getElementById(`${section}-section`).classList.remove('hidden');
+                
+                // Update active nav link
+                document.querySelectorAll('nav a').forEach(el => {
+                    el.classList.remove('bg-blue-50', 'text-blue-600');
+                    el.classList.add('text-gray-600', 'hover:bg-gray-50');
+                });
+                this.classList.add('bg-blue-50', 'text-blue-600');
+                this.classList.remove('text-gray-600', 'hover:bg-gray-50');
+                
+                // Update page title
+                document.querySelector('header h2').textContent = `${this.textContent.trim()} Overview`;
+            });
+        });
+
+        // Function to fetch patient data
+        function fetchPatientData() {
+            return fetchPatients().then(patients => {
+                console.log("Fetched patient data:", patients);
+                return patients;
+            });
+        }
+=======
+
+4. Update the patient form submit handler:
+
+<<<<<<< SEARCH
+                <form>
+=======
+                <form id="patient-form" onsubmit="handlePatientSubmit(event)">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-md">
+            <div class="flex items-center justify-between p-6 border-b">
+                <h3 class="text-xl font-semibold">Add New Patient</h3>
+                <button id="close-modal" class="text-gray-400 hover:text-gray-500">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <form>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-medium mb-2" for="full-name">Full Name</label>
+                        <input type="text" id="full-name" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-medium mb-2" for="email">Email</label>
+                        <input type="email" id="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-medium mb-2" for="phone">Phone</label>
+                        <input type="tel" id="phone" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-medium mb-2" for="gender">Gender</label>
+                        <select id="gender" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-medium mb-2" for="dob">Date of Birth</label>
+                        <input type="date" id="dob" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button type="button" id="cancel-modal" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 rounded-lg text-sm font-medium text-white hover:bg-blue-700">Save Patient</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle mobile menu
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+        
+        // Patient modal controls
+        const patientModal = document.getElementById('patient-modal');
+        const closeModal = document.getElementById('close-modal');
+        const cancelModal = document.getElementById('cancel-modal');
+        const quickActionButtons = document.querySelectorAll('.quick-action');
+        
+        // Sample quick action buttons (would be more in production)
+        quickActionButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                patientModal.classList.remove('hidden');
+            });
+        });
+        
+        [closeModal, cancelModal].forEach(button => {
+            button.addEventListener('click', () => {
+                patientModal.classList.add('hidden');
+            });
+        });
+        
+        // Sample data for charts (would be replaced with actual data from backend)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate loading data
+            setTimeout(() => {
+                document.querySelectorAll('.dashboard-card').forEach(card => {
+                    card.classList.add('animate-pulse');
+                });
+                
+                setTimeout(() => {
+                    document.querySelectorAll('.dashboard-card').forEach(card => {
+                        card.classList.remove('animate-pulse');
+                    });
+                }, 1000);
+            }, 500);
+            
+            // Add event listeners for navigation
+            document.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Remove active class from all links
+                    document.querySelectorAll('nav a').forEach(el => {
+                        el.classList.remove('bg-blue-50', 'text-blue-600');
+                        el.classList.add('text-gray-600', 'hover:bg-gray-50');
+                    });
+                    // Add active class to clicked link
+                    this.classList.add('bg-blue-50', 'text-blue-600');
+                    this.classList.remove('text-gray-600', 'hover:bg-gray-50');
+                    
+                    // Update page title based on clicked link
+                    const pageTitle = this.textContent.trim();
+                    document.querySelector('header h2').textContent = `${pageTitle} Overview`;
+                });
+            });
+        });
+        
+        // Sample function to connect with backend
+        function fetchPatientData() {
+            // In a real application, this would fetch from your MySQL backend
+            console.log("Fetching patient data from backend...");
+            return [
+                { id: 1, name: "John Doe", status: "Active", lastVisit: "2023-11-10" },
+                { id: 2, name: "Jane Smith", status: "Inactive", lastVisit: "2023-10-15" }
+            ];
+        }
+        
+        // Form handler
+        async function handlePatientSubmit(event) {
+            event.preventDefault();
+            const formData = {
+                name: document.getElementById('full-name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                gender: document.getElementById('gender').value,
+                dob: document.getElementById('dob').value
+            };
+            
+            const result = await createPatient(formData);
+            if (result.success) {
+                alert('Patient created successfully!');
+                document.getElementById('patient-modal').classList.add('hidden');
+                document.getElementById('patient-form').reset();
+                // Refresh patient list
+                fetchPatientData();
+            }
+        }
+
+        // Initialize the page
+        window.addEventListener('load', function() {
+            fetchPatientData();
+        });
+    </script>
+</body>
+</html>
